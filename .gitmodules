@@ -1,0 +1,3 @@
+[submodule "dependencies/sockpp"]
+	path = dependencies/sockpp
+	url = git@github.com:fpagliughi/sockpp.git
