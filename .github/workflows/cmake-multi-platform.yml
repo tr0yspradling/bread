@@ -50,8 +50,6 @@ jobs:
             c_compiler: cl
           - os: macos-latest
             c_compiler: gcc
-          - os: macos-latest
-            cpp_compiler: g++
     steps:
     - name: Checkout repository and submodules 
       uses: actions/checkout@v4
