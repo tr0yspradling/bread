@@ -1,9 +1,12 @@
+#pragma once
+
 #include <atomic>
 #include <charconv> // For std::from_chars
 #include <expected>
 #include <iostream>
 #include <sstream>
 #include <memory>
+#include <mutex>
 #include <ranges>
 #include <shared_mutex>
 #include <string>
