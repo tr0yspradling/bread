@@ -1,6 +1,7 @@
 // memcached_clone.cpp
 
 #include <bread/cache_server.h>
+#include <bread/storage.h>
 
 void cache_server::start() {
   is_running.store(true, std::memory_order_relaxed);
@@ -160,25 +161,22 @@ std::expected<std::string, std::string> cache_server::read_data_block(
 }
 
 void cache_server::handle_set(const std::string &key, std::string value) {
-  std::unique_lock lock(datastore_mutex);
-  datastore[key] = std::move(value);
+  storage_.set(key, std::move(value));
 }
 
 void cache_server::handle_get(const std::string &key,
                               sockpp::tcp_socket &client_sock) {
-  std::shared_lock lock(datastore_mutex);
-  if (auto it = datastore.find(key); it != datastore.end()) {
+  if (auto value = storage_.get(key)) {
     std::ostringstream response;
-    response << "VALUE " << key << " 0 " << it->second.size() << "\r\n"
-             << it->second << "\r\n";
+    response << "VALUE " << key << " 0 " << value->size() << "\r\n";
+    response << *value << "\r\n";
     client_sock.write(response.str());
   }
 }
 
 void cache_server::handle_delete(const std::string &key,
                                  sockpp::tcp_socket &client_sock) {
-  std::unique_lock lock(datastore_mutex);
-  if (auto erased = datastore.erase(key); erased > 0) {
+  if (storage_.del(key)) {
     client_sock.write("DELETED\r\n");
   } else {
     client_sock.write("NOT_FOUND\r\n");

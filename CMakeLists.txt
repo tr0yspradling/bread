@@ -24,10 +24,12 @@ add_library(
     bread
     include/bread/cache_server.h
     include/bread/command.h
+    include/bread/storage.h
     src/bread/cache_server.cpp
     src/bread/command.cpp
     src/bread/handler.cpp
     src/bread/handler.h
+    src/bread/storage.cpp
 )
 
 set_property(TARGET bread PROPERTY PREFIX "")
