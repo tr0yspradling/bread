@@ -35,6 +35,8 @@ public:
       }
    }
 
+   ~cache_server() { stop(); }
+
    void start();
 
    void stop();
@@ -52,9 +54,9 @@ public:
    [[nodiscard]] std::expected<std::string, std::string>
    process_command(const std::string &command, sockpp::tcp_socket &client_sock);
 
-   void handle_set(const std::string key, std::string value);
+   void handle_set(const std::string &key, std::string value);
 
-   void handle_get(const std::string key, sockpp::tcp_socket &client_sock);
+   void handle_get(const std::string &key, sockpp::tcp_socket &client_sock);
 
-   void handle_delete(const std::string key, sockpp::tcp_socket &client_sock);
+   void handle_delete(const std::string &key, sockpp::tcp_socket &client_sock);
 };

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.20)
 
 project(cache_server)
 
@@ -39,7 +39,8 @@ add_executable(
 target_link_libraries(cache_server PUBLIC sockpp)
 target_link_libraries(cache_server PUBLIC cache_server_lib)
 
-option(ENABLE_TESTS "Compile & execute unit testing.")
-IF (ENABLE_TESTS)
-ENDIF()
-add_subdirectory(tests)
+option(ENABLE_TESTS "Compile & execute unit testing." ON)
+if(ENABLE_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
