@@ -19,3 +19,17 @@ The repository provides a `.clang-format` file based on the Google style. Run
 ```bash
 clang-format -i src/*.cpp include/*.h tests/*.cpp
 ```
+
+## Documentation
+
+Sphinx is used to generate the HTML documentation from the files under
+`docs/`. Documentation is **not** built by default. Pass
+`-DBREAD_BUILD_DOCS=ON` when configuring CMake if you want the docs generated
+as part of the build.
+
+To build docs manually run:
+
+```bash
+pip install -r docs/requirements.txt
+./docs/update_docs.sh
+```

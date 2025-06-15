@@ -51,3 +51,16 @@ if(ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+# Documentation -------------------------------------------------------------
+option(BREAD_BUILD_DOCS "Generate Sphinx docs" OFF)
+if(BREAD_BUILD_DOCS)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    add_custom_target(docs ALL
+        COMMAND ${Python3_EXECUTABLE} -m sphinx -b html
+                ${CMAKE_CURRENT_SOURCE_DIR}/docs
+                ${CMAKE_CURRENT_BINARY_DIR}/docs
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building documentation with Sphinx"
+        VERBATIM)
+endif()
