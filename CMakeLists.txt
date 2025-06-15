@@ -8,6 +8,13 @@ set(CMAKE_CXX_STANDARD 23)
 
 include(FetchContent)
 
+# Configure the bundled sockpp submodule
+set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)
+set(SOCKPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(external/sockpp)
+
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 add_library(
     cache_server_lib
@@ -30,11 +37,22 @@ target_include_directories(
         src
 )
 
-set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)
-set(SOCKPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_library(
+    client_lib
+    include/client/client.h
+    src/client/client.cpp
+)
 
-add_subdirectory(external/sockpp)
+set_property(TARGET client_lib PROPERTY PREFIX "")
+target_link_libraries(client_lib PUBLIC sockpp)
+target_include_directories(
+    client_lib
+    PUBLIC
+        include
+        external/sockpp/include
+    PRIVATE
+        src
+)
 
 include_directories(include src)
 
@@ -45,6 +63,19 @@ add_executable(
 
 target_link_libraries(cache_server PUBLIC sockpp)
 target_link_libraries(cache_server PUBLIC cache_server_lib)
+
+add_executable(
+    cache_client
+    src/client/main.cpp
+)
+
+target_link_libraries(
+    cache_client
+    PUBLIC
+        client_lib
+        sockpp
+        cache_server_lib
+)
 
 option(ENABLE_TESTS "Compile & execute unit testing." ON)
 if(ENABLE_TESTS)
