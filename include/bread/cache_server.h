@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bread/expected_compat.h>
+#include <bread/storage.h>
 #include <sockpp/tcp_acceptor.h>
 #include <sockpp/tcp_socket.h>
 
@@ -8,14 +9,11 @@
 #include <charconv>  // For std::from_chars
 #include <iostream>
 #include <memory>
-#include <mutex>
 #include <ranges>
-#include <shared_mutex>
 #include <sstream>
 #include <string>
 #include <string_view>
 #include <thread>
-#include <unordered_map>
 #include <vector>
 
 class cache_server {
@@ -23,9 +21,8 @@ class cache_server {
    *
    */
   std::atomic_bool is_running{false};
-  std::shared_mutex datastore_mutex;
   std::vector<std::thread> worker_threads;
-  std::unordered_map<std::string, std::string> datastore;
+  cache_storage storage_;
   sockpp::tcp_acceptor acceptor;
 
  public:
@@ -54,6 +51,7 @@ class cache_server {
   [[nodiscard]] std::expected<std::string, std::string> process_command(
       const std::string &command, sockpp::tcp_socket &client_sock);
 
+ private:
   void handle_set(const std::string &key, std::string value);
 
   void handle_get(const std::string &key, sockpp::tcp_socket &client_sock);
