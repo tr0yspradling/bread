@@ -19,10 +19,27 @@ add_library(
     src/bread/handler.cpp
 )
 
+add_library(
+    client_lib
+    include/bread/cache_client.h
+    src/bread/cache_client.cpp
+)
+
 set_property(TARGET cache_server_lib PROPERTY PREFIX "")
 target_link_libraries(cache_server_lib PUBLIC sockpp)
 target_include_directories(
     cache_server_lib
+    PUBLIC
+        include
+        external/sockpp/include
+    PRIVATE
+        src
+)
+
+set_property(TARGET client_lib PROPERTY PREFIX "")
+target_link_libraries(client_lib PUBLIC sockpp)
+target_include_directories(
+    client_lib
     PUBLIC
         include
         external/sockpp/include
