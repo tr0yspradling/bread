@@ -19,7 +19,9 @@ int main() {
       std::cin.get();
 
       cache_server.stop();
-      // cache_server_thread will be joined automatically because it's a std::jthread
+      if (cache_server_thread.joinable()) {
+         cache_server_thread.join();
+      }
 
    } catch (const std::exception &ex) {
       std::cerr << "cache_server error: " << ex.what() << '\n';

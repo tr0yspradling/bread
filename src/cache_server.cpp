@@ -3,6 +3,7 @@
 #include "cache_server.h"
 
 void cache_server::start() {
+   is_running.store(true, std::memory_order_relaxed);
    while (is_running.load(std::memory_order_relaxed)) {
       sockpp::inet_address peer;
       auto socket = acceptor.accept(&peer);
@@ -19,27 +20,29 @@ void cache_server::start() {
 void cache_server::stop() {
    is_running.store(false, std::memory_order_relaxed);
    acceptor.close();
+   for (auto &thr : worker_threads) {
+      if (thr.joinable()) {
+         thr.join();
+      }
+   }
 }
 
 void cache_server::handle_client(sockpp::tcp_socket &&client_sock) {
    while (is_running.load(std::memory_order_relaxed)) {
-      std::cout << "FOOBAR\n";
       auto command_expected = read_command(client_sock);
       if (!command_expected) {
-         // Log the error and break
          std::cerr << "Read error: " << command_expected.error() << '\n';
          break;
       }
 
-//      auto result = process_command(command_expected.value(), client_sock);
-//      if (!result) {
-//         // Handle special cases like client quitting
-//         if (result.error() == "Client requested to quit") {
-//            break;
-//         } else {
-//            std::cerr << "Processing error: " << result.error() << '\n';
-//         }
-//      }
+      auto result = process_command(command_expected.value(), client_sock);
+      if (!result) {
+         if (result.error() == "Client requested to quit") {
+            break;
+         } else {
+            std::cerr << "Processing error: " << result.error() << '\n';
+         }
+      }
    }
    client_sock.close();
 }
@@ -152,12 +155,12 @@ cache_server::read_data_block(sockpp::tcp_socket &client_sock, size_t total_byte
    return data_block;
 }
 
-void cache_server::handle_set(const std::string key, std::string value) {
+void cache_server::handle_set(const std::string &key, std::string value) {
    std::unique_lock lock(datastore_mutex);
-   datastore[std::move(key)] = std::move(value);
+   datastore[key] = std::move(value);
 }
 
-void cache_server::handle_get(const std::string key, sockpp::tcp_socket &client_sock) {
+void cache_server::handle_get(const std::string &key, sockpp::tcp_socket &client_sock) {
    std::shared_lock lock(datastore_mutex);
    if (auto it = datastore.find(key); it != datastore.end()) {
       std::ostringstream response;
@@ -167,9 +170,9 @@ void cache_server::handle_get(const std::string key, sockpp::tcp_socket &client_
    }
 }
 
-void cache_server::handle_delete(const std::string key, sockpp::tcp_socket &client_sock) {
+void cache_server::handle_delete(const std::string &key, sockpp::tcp_socket &client_sock) {
    std::unique_lock lock(datastore_mutex);
-   if (auto erased = datastore.erase(std::string(key)); erased > 0) {
+   if (auto erased = datastore.erase(key); erased > 0) {
       client_sock.write("DELETED\r\n");
    } else {
       client_sock.write("NOT_FOUND\r\n");
