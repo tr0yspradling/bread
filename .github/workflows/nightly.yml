@@ -1,0 +1,83 @@
+name: Nightly Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        build_type: [Release]
+        include:
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            ext: ""
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            ext: ""
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            ext: ".exe"
+          - os: macos-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            ext: ""
+        exclude:
+          - os: windows-latest
+            c_compiler: gcc
+          - os: windows-latest
+            c_compiler: clang
+          - os: ubuntu-latest
+            c_compiler: cl
+          - os: macos-latest
+            c_compiler: cl
+          - os: macos-latest
+            c_compiler: gcc
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set nightly version
+        run: echo "VERSION=nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+            -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DBREAD_VERSION=${{ env.VERSION }} \
+            -S .
+
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --target cache_server
+
+      - name: Run tests
+        run: |
+          cd build
+          ctest --build-config ${{ matrix.build_type }} --output-on-failure
+
+      - name: Package binary
+        shell: bash
+        run: |
+          mkdir -p release
+          cp build/cache_server${{ matrix.ext }} release/
+          tar -czf bread-${{ env.VERSION }}-${{ runner.os }}-${{ matrix.c_compiler }}.tar.gz -C release cache_server${{ matrix.ext }}
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly
+          prerelease: true
+          files: bread-${{ env.VERSION }}-${{ runner.os }}-${{ matrix.c_compiler }}.tar.gz
+          generate_release_notes: false
