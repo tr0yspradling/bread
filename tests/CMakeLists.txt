@@ -10,7 +10,7 @@ enable_testing()
 
 add_executable(
     cache_server_test
-    test_command.cpp
+    test_cache_server.cpp
 )
 
 target_link_libraries(
