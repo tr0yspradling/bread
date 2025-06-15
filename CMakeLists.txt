@@ -11,17 +11,24 @@ include(FetchContent)
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 add_library(
     cache_server_lib
-    include/cache_server.h
-    src/handler.h
-    include/command.h
-    src/cache_server.cpp
-    src/command.cpp
-    src/handler.cpp
+    include/bread/cache_server.h
+    src/bread/handler.h
+    include/bread/command.h
+    src/bread/cache_server.cpp
+    src/bread/command.cpp
+    src/bread/handler.cpp
 )
 
 set_property(TARGET cache_server_lib PROPERTY PREFIX "")
-target_include_directories(cache_server_lib PRIVATE external/sockpp/include)
-target_include_directories(cache_server_lib PRIVATE include)
+target_link_libraries(cache_server_lib PUBLIC sockpp)
+target_include_directories(
+    cache_server_lib
+    PUBLIC
+        include
+        external/sockpp/include
+    PRIVATE
+        src
+)
 
 set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)
 set(SOCKPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -29,11 +36,11 @@ set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(external/sockpp)
 
-include_directories(include)
+include_directories(include src)
 
 add_executable(
     cache_server
-    src/main.cpp
+    src/bread/main.cpp
 )
 
 target_link_libraries(cache_server PUBLIC sockpp)

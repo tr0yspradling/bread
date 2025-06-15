@@ -5,10 +5,6 @@
 #ifndef CACHE_SERVER_HANDLER_H
 #define CACHE_SERVER_HANDLER_H
 
+class handler {};
 
-class handler {
-
-};
-
-
-#endif //CACHE_SERVER_HANDLER_H
+#endif  // CACHE_SERVER_HANDLER_H
