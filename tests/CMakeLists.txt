@@ -16,6 +16,7 @@ add_executable(
 target_link_libraries(
     cache_server_test
     GTest::gtest_main
+    cache_server_lib
 )
 
 include(GoogleTest)
