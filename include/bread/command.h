@@ -5,10 +5,6 @@
 #ifndef MEMCACHED_CLONE_COMMAND_H
 #define MEMCACHED_CLONE_COMMAND_H
 
+class command {};
 
-class command {
-
-};
-
-
-#endif //MEMCACHED_CLONE_COMMAND_H
+#endif  // MEMCACHED_CLONE_COMMAND_H

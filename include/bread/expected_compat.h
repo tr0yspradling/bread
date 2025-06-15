@@ -1,9 +1,9 @@
 #if __has_include(<expected>)
-#  include <expected>
+#include <expected>
 #endif
 
 #if !defined(__cpp_lib_expected)
-#  include "../external/tl_expected.hpp"
+#include "../../external/tl_expected.hpp"
 namespace std {
 template <class T, class E>
 using expected = tl::expected<T, E>;
@@ -17,5 +17,5 @@ unexpected(E) -> unexpected<E>;
 
 template <class E>
 using bad_expected_access = tl::bad_expected_access<E>;
-} // namespace std
+}  // namespace std
 #endif
