@@ -1,13 +1,16 @@
 # This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
 name: CMake on multiple platforms
+run-name: >-
+  CI - ${{ github.head_ref || github.ref_name }}
 
 on:
   push:
   pull_request:
 
 jobs:
-  build:
+  build-ci:
+    name: Build CI
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -88,8 +91,9 @@ jobs:
         name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
         path: ${{ steps.strings.outputs.build-output-dir }}
 
-  test:
-    needs: build
+  test-ci:
+    name: Test CI
+    needs: build-ci
     runs-on: ${{ matrix.os }}
 
     strategy:
