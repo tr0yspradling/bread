@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 
 #include <chrono>
-#include <thread>
 #include <iostream>
+#include <thread>
 
 class ClientIntegration : public ::testing::Test {
  protected:
@@ -19,7 +19,6 @@ class ClientIntegration : public ::testing::Test {
     srv_thread = std::thread(&cache_server::start, &server);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     port = server.port();
-    std::cout << "server on port " << port << "\n";
   }
 
   void TearDown() override {
@@ -31,17 +30,13 @@ class ClientIntegration : public ::testing::Test {
 TEST_F(ClientIntegration, SetGetDelete) {
   cache_client client;
   ASSERT_TRUE(client.connect(host, port));
-  std::cout << "connected\n";
 
   ASSERT_TRUE(client.set("key", "value"));
-  std::cout << "set done\n";
   auto val = client.get("key");
-  std::cout << "get returned\n";
   ASSERT_TRUE(val.has_value());
   EXPECT_EQ(val.value(), "value");
 
   ASSERT_TRUE(client.del("key"));
-  std::cout << "delete done\n";
   auto none = client.get("key");
   ASSERT_TRUE(none.has_value());
   EXPECT_TRUE(none->empty());

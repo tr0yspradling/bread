@@ -7,10 +7,14 @@
 
 bool cache_client::set(const std::string& key, const std::string& value) {
   if (!conn_) return false;
-  std::string cmd = "set " + key + " 0 0 " + std::to_string(value.size()) +
-                    "\r\n" + value + "\r\n";
-  auto n = conn_.write_n(cmd.data(), cmd.size());
-  if (!n || n.value() != (ssize_t)cmd.size()) return false;
+  std::string header =
+      "set " + key + " 0 0 " + std::to_string(value.size()) + "\r\n";
+  auto n = conn_.write_n(header.data(), header.size());
+  if (!n || n.value() != (ssize_t)header.size()) return false;
+  n = conn_.write_n(value.data(), value.size());
+  if (!n || n.value() != (ssize_t)value.size()) return false;
+  n = conn_.write_n("\r\n", 2);
+  if (!n || n.value() != 2) return false;
   char buf[64];
   auto r = conn_.read(buf, sizeof(buf));
   if (!r) return false;
@@ -37,7 +41,7 @@ std::optional<std::string> cache_client::get(const std::string& key) {
     auto pos2 = view.rfind("GET\r\n");
     if (pos1 != std::string_view::npos && pos2 != std::string_view::npos &&
         pos2 > pos1 + 2) {
-      return std::string(view.substr(pos1 + 2, pos2 - (pos1 + 2)));
+      return std::string(view.substr(pos1 + 2, pos2 - (pos1 + 4)));
     }
   }
   return std::string();

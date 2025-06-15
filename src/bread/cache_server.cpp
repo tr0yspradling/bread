@@ -1,23 +1,21 @@
 // memcached_clone.cpp
 
 #include <bread/cache_server.h>
-#include <bread/storage.h>
-
-void cache_server::start() {
-  is_running.store(true, std::memory_order_relaxed);
-  while (is_running.load(std::memory_order_relaxed)) {
-    sockpp::inet_address peer;
-    auto socket = acceptor.accept(&peer);
-    if (socket) {
-      sockpp::tcp_socket sock = socket.release();
-      std::thread thr(&cache_server::handle_client, this, std::move(sock));
-      worker_threads.push_back(std::move(thr));
-    } else {
-      std::cerr << "Error accepting connection.";
-    }
+#include <sockpp/tcp_connector.h>
+  if (acceptor) {
+    // Connect to the acceptor to unblock any pending accept()
+    sockpp::tcp_connector unblocker({"127.0.0.1", port()});
+    acceptor.close();
   }
-}
 
+  char ch;
+    auto n = client_sock.read(&ch, 1);
+    if (!n) return std::unexpected(std::string("Error reading from socket"));
+    if (n.value() == 0)
+    command.push_back(ch);
+    if (command.size() >= 2 && command.ends_with("\r\n")) {
+      command.resize(command.size() - 2);  // remove CRLF
+      return command;
 void cache_server::stop() {
   is_running.store(false, std::memory_order_relaxed);
   acceptor.close();
