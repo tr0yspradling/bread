@@ -10,3 +10,12 @@ Bread is a simple experimental cache server written in C++23. The project aims t
 - `tests/` – Unit tests built with GoogleTest.
 
 The top level `CMakeLists.txt` configures the build of the `cache_server` executable and its tests.
+
+## Code formatting
+
+The repository provides a `.clang-format` file based on the Google style. Run
+`clang-format` before committing changes:
+
+```bash
+clang-format -i src/*.cpp include/*.h tests/*.cpp
+```
