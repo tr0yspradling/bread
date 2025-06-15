@@ -19,3 +19,9 @@ The repository provides a `.clang-format` file based on the Google style. Run
 ```bash
 clang-format -i src/*.cpp include/*.h tests/*.cpp
 ```
+
+## Documentation
+
+The project documentation lives in the `docs/` directory as Markdown files. No
+special build step is required; the pages can be viewed directly or processed
+with any static site generator.
