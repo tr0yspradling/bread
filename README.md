@@ -4,7 +4,7 @@ Bread is a simple experimental cache server written in C++23. The project aims t
 
 ## Directory overview
 
-- `dependencies/` – Third party code used by the project.  It currently contains the `sockpp` submodule for socket wrappers and a header-only copy of `tl_expected.hpp` for `std::expected` compatibility.
+- `external/` – Third party code used by the project.  It currently contains the `sockpp` submodule for socket wrappers and a header-only copy of `tl_expected.hpp` for `std::expected` compatibility.
 - `include/` – Public header files for the cache server.
 - `src/` – Implementation sources.  This contains the main executable and supporting classes.
 - `tests/` – Unit tests built with GoogleTest.

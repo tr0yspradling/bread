@@ -20,14 +20,14 @@ add_library(
 )
 
 set_property(TARGET cache_server_lib PROPERTY PREFIX "")
-target_include_directories(cache_server_lib PRIVATE dependencies/sockpp/include)
+target_include_directories(cache_server_lib PRIVATE external/sockpp/include)
 target_include_directories(cache_server_lib PRIVATE include)
 
 set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)
 set(SOCKPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
-add_subdirectory(dependencies/sockpp)
+add_subdirectory(external/sockpp)
 
 include_directories(include)
 
