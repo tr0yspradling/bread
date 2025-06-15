@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(cache_server)
+# Allow specifying the version externally. Default is a dev string.
+if(NOT DEFINED BREAD_VERSION)
+    if(DEFINED ENV{BREAD_VERSION})
+        set(BREAD_VERSION "$ENV{BREAD_VERSION}")
+    else()
+        set(BREAD_VERSION "0.0.0")
+    endif()
+endif()
+
+project(cache_server VERSION ${BREAD_VERSION})
+
+add_compile_definitions(BREAD_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 23)
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-v")
