@@ -46,8 +46,8 @@ if(ENABLE_TESTS)
 endif()
 
 # Documentation -------------------------------------------------------------
-option(BREAD_SKIP_DOCS "Skip generating Sphinx docs" OFF)
-if(NOT BREAD_SKIP_DOCS)
+option(BREAD_BUILD_DOCS "Generate Sphinx docs" OFF)
+if(BREAD_BUILD_DOCS)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     add_custom_target(docs ALL
         COMMAND ${Python3_EXECUTABLE} -m sphinx -b html

@@ -23,8 +23,9 @@ clang-format -i src/*.cpp include/*.h tests/*.cpp
 ## Documentation
 
 Sphinx is used to generate the HTML documentation from the files under
-`docs/`. The build is triggered automatically when running the default CMake
-targets. Set `-DBREAD_SKIP_DOCS=ON` if you want to opt-out of this step.
+`docs/`. Documentation is **not** built by default. Pass
+`-DBREAD_BUILD_DOCS=ON` when configuring CMake if you want the docs generated
+as part of the build.
 
 To build docs manually run:
 
