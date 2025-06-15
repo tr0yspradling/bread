@@ -2,7 +2,7 @@
 
 #include <atomic>
 #include <charconv> // For std::from_chars
-#include <expected>
+#include "expected_compat.h"
 #include <iostream>
 #include <sstream>
 #include <memory>
