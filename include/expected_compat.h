@@ -9,7 +9,11 @@ template <class T, class E>
 using expected = tl::expected<T, E>;
 
 template <class E>
-using unexpected = tl::unexpected<E>;
+struct unexpected : tl::unexpected<E> {
+  using tl::unexpected<E>::unexpected;
+};
+template <class E>
+unexpected(E) -> unexpected<E>;
 
 template <class E>
 using bad_expected_access = tl::bad_expected_access<E>;
