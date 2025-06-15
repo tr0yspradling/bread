@@ -22,6 +22,13 @@ clang-format -i src/*.cpp include/*.h tests/*.cpp
 
 ## Documentation
 
-The project documentation lives in the `docs/` directory as Markdown files. No
-special build step is required; the pages can be viewed directly or processed
-with any static site generator.
+Sphinx is used to generate the HTML documentation from the files under
+`docs/`. The build is triggered automatically when running the default CMake
+targets. Set `-DBREAD_SKIP_DOCS=ON` if you want to opt-out of this step.
+
+To build docs manually run:
+
+```bash
+pip install -r docs/requirements.txt
+./docs/update_docs.sh
+```
