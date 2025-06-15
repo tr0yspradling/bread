@@ -10,24 +10,24 @@ include(FetchContent)
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 add_library(
-    cache_server_lib
+    bread
     include/bread/cache_server.h
-    src/bread/handler.h
     include/bread/command.h
     src/bread/cache_server.cpp
     src/bread/command.cpp
     src/bread/handler.cpp
+    src/bread/handler.h
 )
 
-set_property(TARGET cache_server_lib PROPERTY PREFIX "")
-target_link_libraries(cache_server_lib PUBLIC sockpp)
+set_property(TARGET bread PROPERTY PREFIX "")
+target_link_libraries(bread PUBLIC sockpp)
 target_include_directories(
-    cache_server_lib
+    bread
     PUBLIC
         include
         external/sockpp/include
     PRIVATE
-        src
+        src/bread
 )
 
 set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)
@@ -36,15 +36,14 @@ set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(external/sockpp)
 
-include_directories(include src)
+include_directories(include src/bread)
 
 add_executable(
     cache_server
-    src/bread/main.cpp
+    src/server/main.cpp
 )
 
-target_link_libraries(cache_server PUBLIC sockpp)
-target_link_libraries(cache_server PUBLIC cache_server_lib)
+target_link_libraries(cache_server PUBLIC bread)
 
 option(ENABLE_TESTS "Compile & execute unit testing." ON)
 if(ENABLE_TESTS)
