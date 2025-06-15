@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#ifndef BREAD_VERSION
+#  define BREAD_VERSION "dev"
+#endif
+
 int main() {
   try {
     // TODO: Set these from 1) program arguments 2) env vars 3) yaml
@@ -14,8 +18,8 @@ int main() {
     std::thread cache_server_thread(&cache_server::start, &cache_server);
 
     // Wait for user input to stop the cache_server
-    std::cout
-        << "Memcached clone cache_server is running. Press Enter to stop.\n";
+    std::cout << "Memcached clone cache_server " << BREAD_VERSION
+              << " is running. Press Enter to stop.\n";
     std::cin.get();
 
     cache_server.stop();

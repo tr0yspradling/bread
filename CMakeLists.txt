@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(cache_server)
+# Allow specifying the version externally. Default is a dev string.
+if(NOT DEFINED BREAD_VERSION)
+    if(DEFINED ENV{BREAD_VERSION})
+        set(BREAD_VERSION "$ENV{BREAD_VERSION}")
+    else()
+        set(BREAD_VERSION "0.0.0")
+    endif()
+endif()
+
+project(cache_server VERSION ${BREAD_VERSION})
+
+add_compile_definitions(BREAD_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 23)
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-v")
@@ -10,13 +21,15 @@ include(FetchContent)
 
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 add_library(
-    cache_server_lib
+    bread
     include/bread/cache_server.h
-    src/bread/handler.h
     include/bread/command.h
+    include/bread/storage.h
     src/bread/cache_server.cpp
     src/bread/command.cpp
     src/bread/handler.cpp
+    src/bread/handler.h
+    src/bread/storage.cpp
 )
 
 add_library(
@@ -25,15 +38,15 @@ add_library(
     src/bread/cache_client.cpp
 )
 
-set_property(TARGET cache_server_lib PROPERTY PREFIX "")
-target_link_libraries(cache_server_lib PUBLIC sockpp)
+set_property(TARGET bread PROPERTY PREFIX "")
+target_link_libraries(bread PUBLIC sockpp)
 target_include_directories(
-    cache_server_lib
+    bread
     PUBLIC
         include
         external/sockpp/include
     PRIVATE
-        src
+        src/bread
 )
 
 set_property(TARGET client_lib PROPERTY PREFIX "")
@@ -53,18 +66,30 @@ set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(external/sockpp)
 
-include_directories(include src)
+include_directories(include src/bread)
 
 add_executable(
     cache_server
-    src/bread/main.cpp
+    src/server/main.cpp
 )
 
-target_link_libraries(cache_server PUBLIC sockpp)
-target_link_libraries(cache_server PUBLIC cache_server_lib)
+target_link_libraries(cache_server PUBLIC bread)
 
 option(ENABLE_TESTS "Compile & execute unit testing." ON)
 if(ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+# Documentation -------------------------------------------------------------
+option(BREAD_BUILD_DOCS "Generate Sphinx docs" OFF)
+if(BREAD_BUILD_DOCS)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    add_custom_target(docs ALL
+        COMMAND ${Python3_EXECUTABLE} -m sphinx -b html
+                ${CMAKE_CURRENT_SOURCE_DIR}/docs
+                ${CMAKE_CURRENT_BINARY_DIR}/docs
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building documentation with Sphinx"
+        VERBATIM)
 endif()
