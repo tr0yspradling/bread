@@ -3,7 +3,7 @@
 #include <iostream>
 
 #ifndef BREAD_VERSION
-#  define BREAD_VERSION "dev"
+#define BREAD_VERSION "dev"
 #endif
 
 int main() {
