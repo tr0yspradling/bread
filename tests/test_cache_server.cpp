@@ -1,27 +1,36 @@
 #include <bread/cache_server.h>
 #include <gtest/gtest.h>
+#include <sockpp/tcp_acceptor.h>
+#include <sockpp/tcp_connector.h>
 #include <sockpp/tcp_socket.h>
-#include <sockpp/unix_stream_socket.h>
+
+#include <chrono>
+#include <thread>
 
 class CacheServerFixture : public ::testing::Test {
  protected:
   std::string host{"127.0.0.1"};
   cache_server server{host, 0};
+  sockpp::tcp_acceptor acceptor;
   sockpp::tcp_socket server_sock;
   sockpp::tcp_socket client_sock;
 
   static void SetUpTestSuite() { sockpp::initialize(); }
 
   void SetUp() override {
-    auto res = sockpp::unix_stream_socket::pair();
+    acceptor = sockpp::tcp_acceptor(0);
+    ASSERT_TRUE(acceptor);
+    sockpp::inet_address addr(host, acceptor.address().port());
+    sockpp::tcp_connector conn;
+    ASSERT_TRUE(conn.connect(addr));
+    client_sock = sockpp::tcp_socket(conn.release());
+    auto res = acceptor.accept();
     ASSERT_TRUE(res);
-    sockpp::unix_stream_socket sock1, sock2;
-    std::tie(sock1, sock2) = res.release();
-    server_sock = sockpp::tcp_socket(std::move(sock1));
-    client_sock = sockpp::tcp_socket(std::move(sock2));
+    server_sock = std::move(res.release());
   }
 
   void TearDown() override {
+    acceptor.close();
     server_sock.close();
     client_sock.close();
   }

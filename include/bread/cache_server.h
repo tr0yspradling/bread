@@ -51,6 +51,8 @@ class cache_server {
   [[nodiscard]] std::expected<std::string, std::string> process_command(
       const std::string &command, sockpp::tcp_socket &client_sock);
 
+  [[nodiscard]] in_port_t port() const { return acceptor.address().port(); }
+
  private:
   void handle_set(const std::string &key, std::string value);
 
