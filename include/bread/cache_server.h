@@ -59,4 +59,6 @@ class cache_server {
   void handle_get(const std::string &key, sockpp::tcp_socket &client_sock);
 
   void handle_delete(const std::string &key, sockpp::tcp_socket &client_sock);
+
+  [[nodiscard]] in_port_t port() const { return acceptor.address().port(); }
 };

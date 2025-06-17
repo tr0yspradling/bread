@@ -32,6 +32,12 @@ add_library(
     src/bread/storage.cpp
 )
 
+add_library(
+    client_lib
+    include/bread/cache_client.h
+    src/bread/cache_client.cpp
+)
+
 set_property(TARGET bread PROPERTY PREFIX "")
 target_link_libraries(bread PUBLIC sockpp)
 target_include_directories(
@@ -41,6 +47,17 @@ target_include_directories(
         external/sockpp/include
     PRIVATE
         src/bread
+)
+
+set_property(TARGET client_lib PROPERTY PREFIX "")
+target_link_libraries(client_lib PUBLIC sockpp)
+target_include_directories(
+    client_lib
+    PUBLIC
+        include
+        external/sockpp/include
+    PRIVATE
+        src
 )
 
 set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)

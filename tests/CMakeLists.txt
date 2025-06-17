@@ -19,5 +19,18 @@ target_link_libraries(
     bread
 )
 
+add_executable(
+    cache_client_test
+    test_client.cpp
+)
+
+target_link_libraries(
+    cache_client_test
+    GTest::gtest_main
+    client_lib
+    cache_server_lib
+)
+
 include(GoogleTest)
 gtest_discover_tests(cache_server_test)
+gtest_discover_tests(cache_client_test)
