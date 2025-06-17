@@ -33,7 +33,7 @@ add_library(
 )
 
 set_property(TARGET bread PROPERTY PREFIX "")
-target_link_libraries(bread PUBLIC sockpp)
+target_link_libraries(bread PUBLIC sockpp-static)
 target_include_directories(
     bread
     PUBLIC
@@ -46,6 +46,8 @@ target_include_directories(
 set(SOCKPP_BUILD_IPV6 ON CACHE BOOL "" FORCE)
 set(SOCKPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(SOCKPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(SOCKPP_BUILD_SHARED OFF CACHE BOOL "" FORCE)
+set(SOCKPP_BUILD_STATIC ON CACHE BOOL "" FORCE)
 
 add_subdirectory(external/sockpp)
 
