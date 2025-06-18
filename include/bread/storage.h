@@ -1,22 +1,29 @@
+// In-memory storage implementation for bread cache server.
 #pragma once
+
+#include <bread/storage_engine.h>
 
 #include <mutex>
 #include <optional>
 #include <shared_mutex>
-#include <sstream>
 #include <string>
-#include <string_view>
 #include <unordered_map>
 
-class cache_storage {
+namespace bread {
+
+/// Default in-memory storage engine.
+class cache_storage : public storage_engine {
  public:
-  void set(std::string key, std::string value);
+  void set(std::string key, std::string value) override;
 
-  [[nodiscard]] std::optional<std::string> get(const std::string& key) const;
+  [[nodiscard]] std::optional<std::string> get(
+      const std::string& key) const override;
 
-  [[nodiscard]] bool del(const std::string& key);
+  [[nodiscard]] bool del(const std::string& key) override;
 
  private:
   mutable std::shared_mutex mutex_;
   std::unordered_map<std::string, std::string> store_;
 };
+
+}  // namespace bread

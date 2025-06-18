@@ -25,8 +25,30 @@ add_library(
     include/bread/cache_server.h
     include/bread/command.h
     include/bread/storage.h
+    include/bread/storage_engine.h
+    include/bread/commands/bad_command.h
+    include/bread/commands/command_factory.h
+    include/bread/commands/delete_command.h
+    include/bread/commands/get_command.h
+    include/bread/commands/quit_command.h
+    include/bread/commands/set_command.h
+    include/bread/commands/add_command.h
+    include/bread/commands/replace_command.h
+    include/bread/commands/append_command.h
+    include/bread/commands/prepend_command.h
+    include/bread/commands/unknown_command.h
     src/bread/cache_server.cpp
-    src/bread/command.cpp
+    src/bread/commands/command_factory.cpp
+    src/bread/commands/set_command.cpp
+    src/bread/commands/get_command.cpp
+    src/bread/commands/delete_command.cpp
+    src/bread/commands/quit_command.cpp
+    src/bread/commands/add_command.cpp
+    src/bread/commands/replace_command.cpp
+    src/bread/commands/append_command.cpp
+    src/bread/commands/prepend_command.cpp
+    src/bread/commands/unknown_command.cpp
+    src/bread/commands/bad_command.cpp
     src/bread/handler.cpp
     src/bread/handler.h
     src/bread/storage.cpp

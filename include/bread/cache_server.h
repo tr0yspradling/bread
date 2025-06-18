@@ -2,6 +2,7 @@
 
 #include <bread/expected_compat.h>
 #include <bread/storage.h>
+#include <bread/storage_engine.h>
 #include <sockpp/tcp_acceptor.h>
 #include <sockpp/tcp_socket.h>
 
@@ -22,15 +23,16 @@ class cache_server {
    */
   std::atomic_bool is_running{false};
   std::vector<std::thread> worker_threads;
-  cache_storage storage_;
+  std::unique_ptr<bread::storage_engine> storage_;
   sockpp::tcp_acceptor acceptor;
 
  public:
-  explicit cache_server(std::string &host, in_port_t port) : acceptor(port) {
-    if (!acceptor) {
-      throw std::runtime_error("Failed to create acceptor.");
-    }
-  }
+  /// @param storage Optional custom storage engine; defaults to in-memory
+  /// cache_storage.
+  explicit cache_server(std::string host, in_port_t port,
+                        std::unique_ptr<bread::storage_engine> storage =
+                            std::make_unique<bread::cache_storage>())
+      : host_(std::move(host)), port_(port), storage_(std::move(storage)) {}
 
   ~cache_server() { stop(); }
 
@@ -51,12 +53,22 @@ class cache_server {
   [[nodiscard]] std::expected<std::string, std::string> process_command(
       const std::string &command, sockpp::tcp_socket &client_sock);
 
-  [[nodiscard]] in_port_t port() const { return acceptor.address().port(); }
+  [[nodiscard]] in_port_t port() const { return port_; }
 
- private:
+ public:
   void handle_set(const std::string &key, std::string value);
 
   void handle_get(const std::string &key, sockpp::tcp_socket &client_sock);
 
+  /// Retrieves the stored value for a key (no network I/O).
+  [[nodiscard]] std::optional<std::string> get_value(
+      const std::string &key) const {
+    return storage_->get(key);
+  }
+
   void handle_delete(const std::string &key, sockpp::tcp_socket &client_sock);
+
+ private:
+  std::string host_;
+  in_port_t port_;
 };
