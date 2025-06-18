@@ -129,9 +129,6 @@ jobs:
       - name: Run tests
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
-      - name: Install doc dependencies
-        if: github.event_name == 'push'
-        run: pip install -r docs/requirements.txt
       - name: Build docs
         if: github.event_name == 'push'
-        run: ./docs/update_docs.sh
+        run: pip install -r docs/requirements.txt && ./docs/update_docs.sh
