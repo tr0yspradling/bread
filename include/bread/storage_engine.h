@@ -11,8 +11,8 @@ class storage_engine {
  public:
   virtual ~storage_engine() = default;
 
-  /// Store a value for the given key.
-  virtual void set(std::string key, std::string value) = 0;
+  /// Store a value for the given key with optional expiration (seconds).
+  virtual void set(std::string key, std::string value, int exptime = 0) = 0;
 
   /// Retrieve the value for the given key, or std::nullopt if not found.
   virtual std::optional<std::string> get(const std::string& key) const = 0;

@@ -20,7 +20,7 @@ std::expected<std::string, std::string> bread::commands::AppendCommand::execute(
   }
   data_block.resize(bytes_);
   existing->append(data_block);
-  server.handle_set(key_, std::move(*existing));
+  server.handle_set(key_, std::move(*existing), exptime_);
   client.write("STORED\r\n");
   return std::string("");
 }

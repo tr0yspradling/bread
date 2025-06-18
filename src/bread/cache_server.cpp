@@ -103,8 +103,9 @@ std::expected<std::string, std::string> cache_server::read_data_block(
   return data_block;
 }
 
-void cache_server::handle_set(const std::string &key, std::string value) {
-  storage_->set(key, std::move(value));
+void cache_server::handle_set(const std::string &key, std::string value,
+                              int exptime) {
+  storage_->set(key, std::move(value), exptime);
 }
 
 void cache_server::handle_get(const std::string &key,

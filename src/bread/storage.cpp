@@ -4,7 +4,8 @@
 #include <optional>
 #include <shared_mutex>
 
-void bread::cache_storage::set(std::string key, std::string value) {
+void bread::cache_storage::set(std::string key, std::string value,
+                               int /*exptime*/) {
   std::unique_lock lock(mutex_);
   store_[std::move(key)] = std::move(value);
 }

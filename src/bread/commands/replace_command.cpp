@@ -19,7 +19,7 @@ bread::commands::ReplaceCommand::execute(cache_server& server,
     return std::unexpected(std::string("CLIENT_ERROR bad data termination"));
   }
   data_block.resize(bytes_);
-  server.handle_set(key_, std::move(data_block));
+  server.handle_set(key_, std::move(data_block), exptime_);
   client.write("STORED\r\n");
   return std::string("");
 }

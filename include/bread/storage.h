@@ -14,7 +14,7 @@ namespace bread {
 /// Default in-memory storage engine.
 class cache_storage : public storage_engine {
  public:
-  void set(std::string key, std::string value) override;
+  void set(std::string key, std::string value, int exptime = 0) override;
 
   [[nodiscard]] std::optional<std::string> get(
       const std::string& key) const override;

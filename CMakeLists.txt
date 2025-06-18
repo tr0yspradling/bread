@@ -26,6 +26,7 @@ add_library(
     include/bread/command.h
     include/bread/storage.h
     include/bread/storage_engine.h
+    include/bread/storage_expiration.h
     include/bread/commands/bad_command.h
     include/bread/commands/command_factory.h
     include/bread/commands/delete_command.h
@@ -52,6 +53,7 @@ add_library(
     src/bread/handler.cpp
     src/bread/handler.h
     src/bread/storage.cpp
+    src/bread/storage_expiration.cpp
 )
 
 set_property(TARGET bread PROPERTY PREFIX "")

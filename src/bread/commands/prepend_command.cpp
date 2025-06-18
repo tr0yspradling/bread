@@ -21,7 +21,7 @@ bread::commands::PrependCommand::execute(cache_server& server,
   }
   data_block.resize(bytes_);
   existing->insert(0, data_block);
-  server.handle_set(key_, std::move(*existing));
+  server.handle_set(key_, std::move(*existing), exptime_);
   client.write("STORED\r\n");
   return std::string("");
 }

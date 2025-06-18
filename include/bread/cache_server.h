@@ -56,7 +56,7 @@ class cache_server {
   [[nodiscard]] in_port_t port() const { return port_; }
 
  public:
-  void handle_set(const std::string &key, std::string value);
+  void handle_set(const std::string &key, std::string value, int exptime);
 
   void handle_get(const std::string &key, sockpp::tcp_socket &client_sock);
 
