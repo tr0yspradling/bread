@@ -132,6 +132,7 @@ jobs:
           name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
           path: ${{ steps.strings.outputs.build-output-dir }}
       - name: Fix test permissions
+        if: runner.os != 'Windows'
         run: chmod +x ${{ steps.strings.outputs.build-output-dir }}/tests/*_test
       - name: Run tests
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
