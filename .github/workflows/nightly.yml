@@ -113,6 +113,7 @@ jobs:
           name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
           path: build
       - name: Fix test permissions
+        if: runner.os != 'Windows'
         run: chmod +x build/tests/*_test
       - name: Run tests
         run: |
