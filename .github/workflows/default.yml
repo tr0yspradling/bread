@@ -140,4 +140,4 @@ jobs:
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
       - name: Build docs
         if: github.event_name == 'push'
-        run: python3 -m pip install -r docs/requirements.txt && ./docs/update_docs.sh
+        run: ./docs/update_docs.sh
