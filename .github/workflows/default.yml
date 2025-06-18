@@ -8,7 +8,8 @@ on:
       - main
       - release-*
   pull_request:
-
+    branches:
+      - main
 jobs:
   build:
     if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && (github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]'))
@@ -138,4 +139,4 @@ jobs:
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
       - name: Build docs
         if: github.event_name == 'push'
-        run: pip install -r docs/requirements.txt && ./docs/update_docs.sh
+        run: python3 -m pip install -r docs/requirements.txt && ./docs/update_docs.sh
