@@ -19,6 +19,7 @@
 - For additional checks, run static analysis tools such as `clang-tidy` or `cppcheck` when possible.
 
 ## Documentation
+- Gather documentation from code comments. If necessary use Doxygen.
 - Build and verify the Sphinx documentation before pushing changes:
   ```bash
   pip install -r docs/requirements.txt
@@ -32,6 +33,8 @@
 ## Branching and Sign-Off
 - Create descriptive feature branches like `feature/<slug>` or `bugfix/<slug>`.
 - Sign your commits using `git commit -s` to add a `Signed-off-by` line.
+- Use conventional commits and follow the 50/72 rule for commit messages.
+- Update the changelog in the docs/ directory.
 
 ## Pull Request Expectations
 - Summarize the implemented changes and reference any modified files in the PR body.
