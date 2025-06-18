@@ -19,6 +19,16 @@ set(CMAKE_CXX_STANDARD 23)
 
 include(FetchContent)
 
+# Purpose: Place all runtime artifacts in ${CMAKE_BINARY_DIR}/bin/<config>
+if (MSVC)
+    set(_bin_dir ${CMAKE_BINARY_DIR}/bin)
+    foreach(cfg ${CMAKE_CONFIGURATION_TYPES})          # Debug, Release, …
+        string(TOUPPER "${cfg}" _ucfg)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${_ucfg} "${_bin_dir}")
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${_ucfg} "${_bin_dir}")
+    endforeach()
+endif()
+
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 add_library(
     bread
