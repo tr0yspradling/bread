@@ -112,6 +112,8 @@ jobs:
         with:
           name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
           path: build
+      - name: Fix test permissions
+        run: chmod +x build/tests/*_test
       - name: Run tests
         run: |
           cd build

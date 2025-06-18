@@ -131,6 +131,8 @@ jobs:
         with:
           name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
           path: ${{ steps.strings.outputs.build-output-dir }}
+      - name: Fix test permissions
+        run: chmod +x ${{ steps.strings.outputs.build-output-dir }}/tests/*_test
       - name: Run tests
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
