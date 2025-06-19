@@ -155,10 +155,10 @@ jobs:
         with:
           name: docs
           path: docs/_build
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: docs/_build
+#      - name: Upload pages artifact
+#        uses: actions/upload-pages-artifact@v2
+#        with:
+#          path: docs/_build
 
   deploy-pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
