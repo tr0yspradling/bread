@@ -156,7 +156,7 @@ jobs:
           name: docs
           path: docs/_build
       - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
           path: docs/_build
 
