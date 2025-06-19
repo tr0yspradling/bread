@@ -58,7 +58,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.strings.outputs.build-output-dir }}/external
-          key: ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-${{ hashFiles('external/**') }}
+          key: ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-${{ hashFiles('external/**') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-
       - name: Configure CMake
