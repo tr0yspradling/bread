@@ -67,7 +67,7 @@ add_library(
 )
 
 set_property(TARGET bread PROPERTY PREFIX "")
-target_link_libraries(bread PUBLIC sockpp)
+target_link_libraries(bread PUBLIC Sockpp::sockpp)
 target_include_directories(
     bread
     PUBLIC
