@@ -1,3 +1,9 @@
+## v0.1.3 (2025-06-20)
+
+### Fix
+
+- **version-foo-test**: add simple test file
+
 ## v0.1.2 (2025-06-19)
 
 ### Fix
