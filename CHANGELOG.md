@@ -1,3 +1,9 @@
+## v0.1.4 (2025-06-20)
+
+### Fix
+
+- adjust packaging path on Windows
+
 ## v0.1.3 (2025-06-20)
 
 ### Fix
