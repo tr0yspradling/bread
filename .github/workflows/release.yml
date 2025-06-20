@@ -16,23 +16,20 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
+        c_compiler: [gcc, clang, cl]
         include:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            ext: ""
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            ext: ""
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            ext: ".exe"
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
-            ext: ""
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -80,23 +77,20 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
+        c_compiler: [gcc, clang, cl]
         include:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-            ext: ""
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            ext: ""
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
-            ext: ".exe"
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
-            ext: ""
         exclude:
           - os: windows-latest
             c_compiler: gcc
