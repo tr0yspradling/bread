@@ -51,13 +51,13 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
       - name: Configure
-        run: |
-          cmake -B build \
-            -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
-            -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DBREAD_VERSION=${{ env.VERSION }} \
-            -S .
+        run: >
+          cmake -B build
+          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DBREAD_VERSION=${{ env.VERSION }}
+          -S .
 
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }} --target cache_server
