@@ -14,27 +14,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        build_type: [ Release ]
+        c_compiler: [ gcc, clang, cl ]
         include:
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-          - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
+            ext: ""
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            ext: ".exe"
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            ext: ""
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            ext: ""
         exclude:
-#          - os: windows-latest
-#            c_compiler: gcc
-#          - os: windows-latest
-#            c_compiler: clang
+          - os: windows-latest
+            c_compiler: gcc
+          - os: windows-latest
+            c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
           - os: macos-latest
@@ -51,25 +55,39 @@ jobs:
         run: pip install commitizen
 
       - name: Set nightly version
-        run: echo "VERSION=$(cz version --project)-nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "BREAD_VERSION=$(cz version --project)-nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+      - name: Cache external
+        if: github.actor != 'dependabot[bot]'
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.strings.outputs.build-output-dir }}/external
+          key: ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-${{ hashFiles('external/**') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-
 
       - name: Configure
-        run: |
-          cmake -B build
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DBREAD_VERSION=${{ env.VERSION }}
-          -S .
+          -DBREAD_VERSION=${{ env.BREAD_VERSION }}
+          -S ${{ github.workspace }}
 
       - name: Build
-        run: cmake --build build --config ${{ matrix.build_type }}
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
       - name: Upload build
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
-          path: build
+          path: ${{ steps.strings.outputs.build-output-dir }}
 
   test-nightly:
     name: Test Nightly
@@ -78,22 +96,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        build_type: [ Release ]
+        c_compiler: [ gcc, clang, cl ]
         include:
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-          - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
+            ext: ""
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+            ext: ".exe"
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+            ext: ""
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            ext: ""
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -113,29 +135,44 @@ jobs:
       - name: Install commitizen
         run: pip install commitizen
       - name: Set nightly version
-        run: echo "VERSION=$(cz version --project)-nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "BREAD_VERSION=$(cz version --project)-nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Cache external
+        if: github.actor != 'dependabot[bot]'
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.strings.outputs.build-output-dir }}/external
+          key: ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-${{ hashFiles('external/**') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}-external-
       - name: Download build
         uses: actions/download-artifact@v4
         with:
           name: build-${{ matrix.os }}-${{ matrix.c_compiler }}
-          path: build
+          path: ${{ steps.strings.outputs.build-output-dir }}
       - name: Fix test permissions
         if: runner.os != 'Windows'
-        run: chmod +x build/tests/*_test
+        run: chmod +x ${{ steps.strings.outputs.build-output-dir }}/tests/*_test
       - name: Run tests
-        run: |
-          cd build
-          ctest --build-config ${{ matrix.build_type }} --output-on-failure
+        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+        run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
       - name: Package binary
         shell: bash
         run: |
           mkdir -p release
-          cp build/cache_server${{ matrix.ext }} release/
-          tar -czf bread-${{ env.VERSION }}-${{ runner.os }}-${{ matrix.c_compiler }}.tar.gz -C release cache_server${{ matrix.ext }}
+          if [ -f "${{ steps.strings.outputs.build-output-dir }}/cache_server${{ matrix.ext }}" ]; then
+            cp "${{ steps.strings.outputs.build-output-dir }}/cache_server${{ matrix.ext }}" release/
+          else
+            cp "${{ steps.strings.outputs.build-output-dir }}/bin/cache_server${{ matrix.ext }}" release/
+          fi
+          tar -czf bread-${{ env.BREAD_VERSION }}-${{ runner.os }}-${{ matrix.c_compiler }}.tar.gz -C release cache_server${{ matrix.ext }}
       - name: Upload release asset
         uses: softprops/action-gh-release@v1
         with:
           tag_name: nightly
           prerelease: true
-          files: bread-${{ env.VERSION }}-${{ runner.os }}-${{ matrix.c_compiler }}.tar.gz
+          files: bread-${{ env.BREAD_VERSION }}-${{ runner.os }}-${{ matrix.c_compiler }}.tar.gz
           generate_release_notes: false

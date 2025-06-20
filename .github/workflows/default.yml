@@ -140,6 +140,7 @@ jobs:
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
   
   docs:
+    if: github.ref == 'refs/heads/main'
     name: Build Docs
     needs: test
     runs-on: ubuntu-latest
