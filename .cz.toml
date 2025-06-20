@@ -1,6 +1,6 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-tag_format = "v$version"
+tag_format = "v$major.$minor.$patch"
 version_scheme = "semver"
 version = "0.1.2"
 update_changelog_on_bump = true
