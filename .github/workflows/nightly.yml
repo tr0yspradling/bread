@@ -47,8 +47,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install commitizen
+        run: pip install commitizen
+
       - name: Set nightly version
-        run: echo "VERSION=nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "VERSION=$(cz version --project)-nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Configure
         run: |
@@ -107,8 +110,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: Install commitizen
+        run: pip install commitizen
       - name: Set nightly version
-        run: echo "VERSION=nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
+        run: echo "VERSION=$(cz version --project)-nightly-$(date -u +'%Y%m%d')" >> $GITHUB_ENV
       - name: Download build
         uses: actions/download-artifact@v4
         with:

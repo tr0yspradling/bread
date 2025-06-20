@@ -55,6 +55,7 @@ jobs:
         shell: bash
         run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
       - name: Cache external
+        if: github.actor != 'dependabot[bot]'
         uses: actions/cache@v4
         with:
           path: ${{ steps.strings.outputs.build-output-dir }}/external
@@ -121,6 +122,7 @@ jobs:
         shell: bash
         run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
       - name: Cache external
+        if: github.actor != 'dependabot[bot]'
         uses: actions/cache@v4
         with:
           path: ${{ steps.strings.outputs.build-output-dir }}/external
