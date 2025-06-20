@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 
-# Allow specifying the version externally. Default is a dev string.
+# If a version is not supplied via the BREAD_VERSION variable, read it from the
+# VERSION file so commitizen can manage releases.
 if(NOT DEFINED BREAD_VERSION)
     if(DEFINED ENV{BREAD_VERSION})
         set(BREAD_VERSION "$ENV{BREAD_VERSION}")
+    elseif(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
+        file(READ "${CMAKE_SOURCE_DIR}/VERSION" BREAD_VERSION)
+        string(STRIP "${BREAD_VERSION}" BREAD_VERSION)
     else()
         set(BREAD_VERSION "0.0.0")
     endif()
