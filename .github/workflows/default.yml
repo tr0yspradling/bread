@@ -12,7 +12,6 @@ on:
       - main
 jobs:
   build:
-    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && (github.event.pull_request.head.repo.fork || github.actor == 'dependabot[bot]'))
     name: Build
     runs-on: ${{ matrix.os }}
     strategy:
@@ -78,7 +77,6 @@ jobs:
           path: ${{ steps.strings.outputs.build-output-dir }}
 
   test:
-    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && (github.event.pull_request.head.repo.fork || startsWith(github.head_ref, 'dependabot/')))
     name: Unit Tests
     needs: build
     runs-on: ${{ matrix.os }}
